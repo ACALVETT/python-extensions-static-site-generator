@@ -6,7 +6,8 @@ from pathlib import Path
 
 from docutils.core import publish_parts
 from markdown import markdown
-from ssg.content import Content, hooks
+from ssg.content import Content
+from ssg.hooks import hooks
 
 
 class Parser:
