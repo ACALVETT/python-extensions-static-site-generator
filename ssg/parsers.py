@@ -7,6 +7,7 @@ from pathlib import Path
 from docutils.core import publish_parts
 from markdown import markdown
 from ssg.content import Content
+
 from ssg import hooks
 
 
@@ -46,11 +47,12 @@ class MarkdownParser(Parser):
     def parse(self, path, source, dest):
         content = Content.load(self.read(path))
         html = markdown(content.body)
-        filtered = hooks.filter("generate_menu",html,self.base_ext)
+        filtered = hooks.filter("generate_menu", html, self.base_ext)
         self.write(path, dest, filtered)
         sys.stdout.write(
             "\x1b[1;32m{} converted to HTML. Metadata: {}\n".format(path.name, content)
         )
+        hooks.event("written")
 
 
 class ReStructuredTextParser(Parser):
@@ -59,8 +61,9 @@ class ReStructuredTextParser(Parser):
     def parse(self, path, source, dest):
         content = Content.load(self.read(path))
         html = publish_parts(content.body, writer_name="html5")
-        filtered = hooks.filter("generate_menu",html["html_body"],self.base_ext)
+        filtered = hooks.filter("generate_menu", html["html_body"], self.base_ext)
         self.write(path, dest, filtered)
         sys.stdout.write(
             "\x1b[1;32m{} converted to HTML. Metadata: {}\n".format(path.name, content)
         )
+        hooks.event("written")
